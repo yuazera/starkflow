@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
 import FlowChart from '../FlowChart';
-import ChatPanel from '../Chat';
+import ChatPanel from '@/components/Chat';
 
 const { Content } = Layout;
 
@@ -20,4 +20,4 @@ const MainLayout: React.FC = () => {
   );
 };
 
-export default MainLayout; 
+export default MainLayout;

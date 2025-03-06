@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import { NodeTemplate } from '@/types/flow';
 
 interface NodeTemplatePanelProps {

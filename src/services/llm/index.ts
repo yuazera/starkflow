@@ -10,7 +10,7 @@ class LLMService {
   private nodeTemplates: NodeTemplate[];
 
   constructor() {
-    this.baseUrl = 'http://localhost:11434'; // Ollama default port
+    this.baseUrl = 'http://https://etuycc-lckbpa-8434.app.cloudstudio.work'; // Ollama default port
     this.scenarios = [];
     this.dialogueGuides = [];
     this.flowValidation = {
