@@ -1,22 +1,46 @@
+import { Node, Edge as ReactFlowEdge } from 'reactflow';
+
 export type NodeType = 'start' | 'end' | 'process' | 'decision';
 
-export interface BaseNode {
-  id: string;
-  type: NodeType;
-  position: { x: number; y: number };
-  data: {
-    label: string;
-    attributes: {
-      [key: string]: string;
-    }
-  }
+export interface NodeAttribute {
+  key: string;
+  label: string;
+  type: 'text' | 'number' | 'select' | 'date';
+  required: boolean;
+  options?: string[];
+  defaultValue?: string;
 }
 
-export interface Edge {
-  id: string;
-  source: string;
-  target: string;
+export interface NodeTemplate {
+  type: NodeType;
+  label: string;
+  description: string;
+  attributes: NodeAttribute[];
+  isEditable: boolean;
 }
+
+export interface NodeData {
+  label: string;
+  attributes: {
+    [key: string]: string;
+  };
+  template?: string;
+  isLocked?: boolean;
+  permissions?: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canChangeAttributes: boolean;
+  };
+}
+
+export type BaseNode = Node<NodeData>;
+
+export interface EdgeData {
+  label?: string;
+  isLocked?: boolean;
+}
+
+export type Edge = ReactFlowEdge<EdgeData>;
 
 export interface FlowVersion {
   id: string;
@@ -34,8 +58,27 @@ export interface ExcelTemplate {
   };
 }
 
-export interface TemplateQuestion {
-  id: string;
+export interface DialogueGuide {
   nodeType: NodeType;
-  questions: string[];
-} 
+  contextQuestions: string[];
+  attributePrompts: {
+    [key: string]: string[];
+  };
+  validationRules: {
+    [key: string]: {
+      rule: string;
+      message: string;
+    }[];
+  };
+}
+
+export interface FlowValidation {
+  requiredNodes: NodeType[];
+  maxNodes?: number;
+  connectionRules: {
+    [key in NodeType]?: {
+      allowed: NodeType[];
+      max?: number;
+    };
+  };
+}

@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { BaseNode, Edge, FlowVersion } from '@/types/flow';
 import { generateUniqueId } from '@/utils/helpers';
 
+type UpdateFunction<T> = T | ((prev: T) => T);
+
 interface FlowState {
   nodes: BaseNode[];
   edges: Edge[];
@@ -10,8 +12,8 @@ interface FlowState {
   currentVersion: FlowVersion | null;
   
   // Actions
-  setNodes: (nodes: BaseNode[]) => void;
-  setEdges: (edges: Edge[]) => void;
+  setNodes: (nodes: UpdateFunction<BaseNode[]>) => void;
+  setEdges: (edges: UpdateFunction<Edge[]>) => void;
   addNode: (node: Omit<BaseNode, 'id'>) => void;
   updateNode: (id: string, data: Partial<BaseNode>) => void;
   deleteNode: (id: string) => void;
@@ -20,15 +22,25 @@ interface FlowState {
   setSelectedNode: (node: BaseNode | null) => void;
 }
 
-export const useFlowStore = create<FlowState>((set) => ({
+type SetState = (
+  partial: Partial<FlowState> | ((state: FlowState) => Partial<FlowState>),
+  replace?: boolean
+) => void;
+
+export const useFlowStore = create<FlowState>((set: SetState) => ({
   nodes: [],
   edges: [],
   selectedNode: null,
   highlightedNode: null,
   currentVersion: null,
 
-  setNodes: (nodes) => set({ nodes }),
-  setEdges: (edges) => set({ edges }),
+  setNodes: (nodes) => set((state) => ({
+    nodes: typeof nodes === 'function' ? nodes(state.nodes) : nodes
+  })),
+  
+  setEdges: (edges) => set((state) => ({
+    edges: typeof edges === 'function' ? edges(state.edges) : edges
+  })),
   
   addNode: (node) => set((state) => ({
     nodes: [...state.nodes, { ...node, id: generateUniqueId() }]
@@ -67,4 +79,4 @@ export const useFlowStore = create<FlowState>((set) => ({
   
   setHighlightedNode: (id) => set({ highlightedNode: id }),
   setSelectedNode: (node) => set({ selectedNode: node })
-})); 
+}));
